@@ -1,146 +1,150 @@
-# Mobile Banking App Review Analysis for Omega Consultancy
+Mobile Banking App Review Analysis for Omega Consultancy
 
-## Project Overview
+Project Overview
 
-This project, undertaken for Omega Consultancy, focuses on enhancing customer retention and satisfaction for mobile banking applications. As a Data Analyst, the core objective was to extract, analyze, and interpret user feedback from Google Play Store reviews for three prominent banks: **Commercial Bank of Ethiopia (CBE)**, **Bank of Abyssinia (BOA)**, and **Dashen Bank**. The insights derived are intended to guide strategic improvements for product, marketing, and engineering teams, addressing key areas such as user retention, feature enhancement, and efficient complaint management.
+This project, developed for Omega Consultancy, focuses on enhancing customer retention and satisfaction for mobile banking applications. As a Data Analyst, the core objective was to build an end-to-end data pipeline to automatically extract, analyze, and interpret user feedback from Google Play Store reviews for five prominent Ethiopian banks: Commercial Bank of Ethiopia (CBE), Bank of Abyssinia (BOA), Dashen Bank, Awash Bank, and Zemen Bank.
 
-## Project Objectives
+The final output is an interactive dashboard that provides actionable insights to guide strategic improvements for product, marketing, and engineering teams. This analysis addresses key areas such as user retention, feature enhancement, and efficient complaint management.
 
-The project aimed to achieve the following:
-* **Scrape user reviews** from the Google Play Store.
-* Perform **sentiment analysis** (positive/negative/neutral) and **extract themes** (e.g., "bugs", "UI").
-* Identify crucial **satisfaction drivers** (e.g., "speed") and **pain points** (e.g., "crashes").
-* **Store cleaned and analyzed review data** in an Oracle relational database.
-* Deliver a comprehensive **report with visualizations** and **actionable recommendations**.
+Project Objectives
 
-## Scenarios Addressed
+The project successfully achieved the following objectives:
+
+    Scrape over 2,800 user reviews from the Google Play Store using a robust pipeline.
+
+    Clean and preprocess raw review data, handling missing values and duplicates.
+
+    Perform sentiment analysis to quantify user opinions (positive/negative/neutral).
+
+    Extract recurring themes and keywords (e.g., "bugs", "UI", "speed") from user comments.
+
+    Store all cleaned and analyzed data in a persistent Oracle relational database.
+
+    Deliver an interactive dashboard with key metrics and visualizations for a clear and immediate understanding of customer sentiment and pain points.
+
+Scenarios Addressed
 
 This analysis directly supports banking teams in the following simulated real-world scenarios:
 
-1.  **Retaining Users:** Analyze complaints (e.g., "slow loading during transfers") to determine broader issues and suggest app investigation areas (e.g., comparing CBE 4.4-star, BOA 2.8-star, Dashen 4.0-star ratings).
-2.  **Enhancing Features:** Extract desired features (e.g., "transfer", "fingerprint login", "faster loading times") through keyword and theme extraction, recommending competitive strategies for each bank.
-3.  **Managing Complaints:** Cluster and track common complaints (e.g., "login error") to inform AI chatbot integration and strategies for faster support resolution.
+    Retaining Users: By analyzing common complaints (e.g., "slow loading during transfers"), the analysis determines broader issues and suggests areas for app investigation and optimization.
 
-## Technologies and Libraries Used
+    Enhancing Features: By extracting desired features (e.g., "fingerprint login", "faster loading times") through keyword and theme extraction, the project provides competitive strategies for each bank.
 
-* **Python:** Primary programming language for data processing, analysis, and database interaction.
-* **`google-play-scraper`:** For web scraping mobile app reviews from Google Play Store.
-* **`pandas`:** For efficient data manipulation, cleaning, and analysis.
-* **`spaCy`:** For natural language processing (tokenization, lemmatization, stop-word removal).
-* **`TfidfVectorizer` (from `sklearn.feature_extraction.text`):** For keyword and n-gram extraction.
-* **`vaderSentiment`:** For sentiment analysis (as per initial Task 2 description for alternative methods).
-* **`matplotlib` & `seaborn`:** For data visualization and plotting.
-* **`WordCloud`:** For generating visual representations of prominent keywords.
-* **Oracle Database (Oracle XE - `LOCALCR` instance):** For persistent storage of cleaned and processed review data.
-* **`cx_Oracle`:** Python driver for connecting to and interacting with Oracle Database.
-* **SQL Developer / SQL*Plus:** For database schema management and verification.
-* **Git / GitHub:** For version control and collaborative development.
+    Managing Complaints: By clustering and tracking common complaints (e.g., "login error"), the insights can inform strategies for faster support resolution, potentially via in-app chatbots.
 
-## Project Structure & Tasks Completed
+Technologies and Libraries Used
 
-The project was structured into four key tasks, each building upon the previous one:
+    Python: Primary programming language for the entire data pipeline.
 
-### Task 1: Data Collection and Preprocessing
-* **Objective:** Scrape user reviews and prepare them for analysis.
-* **Methodology:**
-    * **Git Setup:** Established a GitHub repository (`Bank-reviews-analysis`) with `.gitignore` and `requirements.txt`. Maintained frequent, meaningful commits on the `task-1` branch.
-    * **Web Scraping:** Used `google-play-scraper` to collect over 400 reviews per bank (1,200+ total) for CBE, BOA, and Dashen.
-    * **Preprocessing:** Implemented Python scripts to remove duplicate reviews, handle missing data, and normalize dates to `YYYY-MM-DD` format.
-* **Output:** Cleaned review data saved as CSV files (`cleaned_CBE_reviews.csv`, `cleaned_BOA_reviews.csv`, `cleaned_Dashen_reviews.csv`) with columns: `review_text`, `rating`, `date`, `bank_name`, `source`.
+    google-play-scraper: For web scraping mobile app reviews.
 
-### Task 2: Sentiment and Thematic Analysis
-* **Objective:** Quantify review sentiment and identify recurring themes.
-* **Methodology:**
-    * **Sentiment Analysis:** Applied `vaderSentiment` (as initially specified) or `distilbert-base-uncased-finetuned-sst-2-english` (as per code implementation) to assign sentiment scores and labels (positive, negative, neutral) to reviews.
-    * **Thematic Analysis:** Utilized `spaCy` for text cleaning (tokenization, lemmatization, stop-word removal) and `TfidfVectorizer` for keyword extraction. Grouped keywords into 5 overarching themes: 'Account Access Issues', 'Transaction Performance', 'User Interface & Experience', 'Customer Support', and 'Feature Requests'.
-* **Output:** Processed dataframes including `processed_review`, `sentiment_score`, and `sentiment` (or `sentiment_label`), saved to CSV files (`processed_reviews_CBE.csv`, etc.).
+    pandas: For efficient data manipulation, cleaning, and analysis.
 
-### Task 3: Store Cleaned Data in Oracle
-* **Objective:** Design and implement a relational database in Oracle to store the cleaned and processed review data persistently.
-* **Methodology:**
-    * **Oracle Database Setup:** Used an existing Oracle XE instance (`LOCALCR` - identified as a Non-CDB).
-    * **Schema Definition:** Created a dedicated user (schema) named `BANK_REVIEWS` within the `LOCALCR` database. Defined `Banks` and `Reviews` tables with appropriate data types (`VARCHAR2`, `NUMBER`, `DATE`, `CLOB`) and constraints (`PRIMARY KEY`, `FOREIGN KEY`, `NOT NULL`). A sequence and trigger were implemented to auto-populate `review_id`.
-    * **Data Insertion:** Developed a Python script using `cx_Oracle` to connect to the `BANK_REVIEWS` schema in `LOCALCR` and batch insert the combined processed review data from CSVs into the `reviews` table.
-* **KPIs Achieved:**
-    * Successfully established connection and insert script.
-    * `reviews` table populated with over 1,200 entries.
-    * SQL DDL for schema committed to GitHub.
+    spacy: For natural language processing (tokenization, lemmatization, stop-word removal).
 
-### Task 4: Insights and Recommendations
-* **Objective:** Derive actionable insights, visualize results, and recommend app improvements.
-* **Methodology:**
-    * **Data Loading:** Loaded processed review data directly from the Oracle `reviews` table into a Pandas DataFrame.
-    * **Insights:** Identified 2+ drivers (e.g., efficient UI/UX, high performance) and 2+ pain points (e.g., app stability issues, slow operations) by analyzing positive/negative sentiment trends and top keywords per bank. Performed bank comparisons based on average ratings and sentiment distributions.
-    * **Visualizations:** Generated the following plots using `matplotlib` and `seaborn`:
-        * Overall Rating Distribution.
-        * Overall Sentiment Distribution (Pie Chart).
-        * Average Rating per Bank (Bar Plot).
-        * Monthly Average Sentiment Score Trend by Bank (Line Plot).
-        * Word Cloud for Top Positive Keywords (Drivers).
-        * Word Cloud for Top Negative Keywords (Pain Points).
-    * **Ethical Considerations:** Acknowledged potential review biases (e.g., negative skew), language nuances, and representativeness limitations in the analysis.
-* **KPIs Achieved:**
-    * Identified multiple drivers and pain points with supporting evidence.
-    * Produced clear, labeled visualizations.
-    * Provided practical, actionable recommendations for app improvements.
+    scikit-learn: For keyword and n-gram extraction using TfidfVectorizer.
 
-## Key Insights & Recommendations (Summary)
+    vaderSentiment: For sentiment analysis, providing sentiment scores and labels.
 
-* **Sentiment Overview:** Dashen Bank demonstrates the highest positive sentiment, followed by CBE, with BOA having a more mixed to negative sentiment distribution, indicating significant areas for improvement.
-* **Common Pain Points:** App stability (crashes), transaction performance (slow loading, transfer issues), and customer support responsiveness are recurring themes, particularly prominent for BOA.
-* **Key Drivers:** User-friendly interfaces, efficient core banking functionalities (fast transfers, easy payments), and comprehensive digital experiences (e.g., Dashen's "superapp" features) are strong drivers of satisfaction.
-* **Recommendations include:**
-    * **Prioritizing app stability and bug fixes, especially for BOA.**
-    * **Enhancing money transfer and transaction features** with clear feedback and addressing specific limitations.
-    * **Improving customer support accessibility and responsiveness**, potentially via in-app chatbots for common queries.
-    * **Focusing on UI/UX for speed and ease of use**, capitalizing on positive feedback for quick and simple interactions.
-    * **Exploring value-added features** like budgeting tools or biometric authentication to increase engagement.
+    tqdm: For displaying progress bars, enhancing user experience for long-running tasks.
 
-## Ethical Considerations
+    oracledb: Python driver for connecting to and interacting with Oracle Database.
 
-The analysis was conducted with awareness of potential biases inherent in user-generated content, such as a possible negative skew in reviews. The limitations of automated sentiment analysis (e.g., inability to perfectly capture sarcasm or context) and the representativeness of Google Play reviews (not encompassing all user demographics) were considered. All data handling respected user privacy by focusing on aggregated, anonymized insights.
+    SQL Developer / SQL*Plus: For database schema management.
 
-## Setup and Usage
+    streamlit: For building the interactive, web-based dashboard.
 
-To set up and run this project:
+    plotly: For creating professional and interactive data visualizations.
 
-1.  **Clone the Repository:**
-    ```bash
-    git clone [https://github.com/tigrem/Bank-reviews-analysis.git)
-    cd Bank-reviews-analysis
-    ```
-    (Replace `your-username` with your actual GitHub username if this is a public repo).
+    Git / GitHub: For version control.
 
-2.  **Create a Virtual Environment (Recommended):**
-    ```bash
-    python -m venv venv
-    # On Windows:
-    .\venv\Scripts\activate
-    # On macOS/Linux:
-    source venv/bin/activate
-    ```
+Project Structure & Tasks Completed
 
-3.  **Install Dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-    (Ensure `requirements.txt` contains all listed libraries: `cx_Oracle`, `pandas`, `matplotlib`, `seaborn`, `wordcloud`, `scikit-learn`, `google-play-scraper`, `spacy`, `vaderSentiment`)
+The project was structured into a complete data pipeline, ensuring each stage is verifiable and robust.
 
-4.  **Oracle Database Setup:**
-    * Ensure Oracle Database Express Edition (XE) is installed and running (`LOCALCR` service).
-    * Connect as `SYS` or `SYSTEM` to `LOCALCR`.
-    * Create the `BANK_REVIEWS` user (schema) and grant necessary privileges as described in Task 3.
-    * Create the `Banks` and `Reviews` tables (and the `reviews_seq` sequence and `trg_reviews_id` trigger for `review_id` auto-population) within the `BANK_REVIEWS` schema. Refer to the SQL DDL in the repository.
+    Task 1: Data Collection and Preprocessing (Completed)
 
-5.  **Run Data Collection and Preprocessing (Task 1):**
-    * Execute the script for Task 1 to scrape and clean data. This will generate `cleaned_BANK_reviews.csv` files.
+        Objective: Scrape user reviews and prepare them for analysis.
 
-6.  **Run Sentiment and Thematic Analysis (Task 2):**
-    * Execute the script for Task 2. This will generate `processed_reviews_BANK.csv` files.
+        Methodology: A robust Python script was used to scrape over 2,800 reviews from five different banks. The script includes error handling to gracefully manage empty or malformed data. Data was then cleaned to remove duplicates, handle missing values, and normalize dates.
 
-7.  **Run Data Insertion into Oracle (Task 3):**
-    * Update the `username` and `password` variables in the Oracle insertion script (`oracle_db_insert.py` or similar) to match your `BANK_REVIEWS` user credentials.
-    * Run the script to insert data into your Oracle database.
+        Output: Raw and cleaned review data for each bank were saved as CSV files in the notebooks/data directory, with a final combined file named all_processed_reviews.csv.
 
-8.  **Run Insights and Recommendations (Task 4):**
-    * Update the `username
+    Task 2: Sentiment and Thematic Analysis (Completed)
+
+        Objective: Quantify review sentiment and identify recurring themes.
+
+        Methodology: The vaderSentiment library was used to assign a sentiment score and a corresponding label (positive, negative, or neutral) to each review. spaCy and TfidfVectorizer were utilized to identify the most frequent and important keywords in both positive and negative reviews.
+
+        Output: The combined DataFrame was enriched with new sentiment_score and sentiment columns and saved as final_analyzed_reviews.csv.
+
+    Task 3: Data Persistence (Completed)
+
+        Objective: Design and implement a relational database to store the processed data.
+
+        Methodology: A schema with Banks and Reviews tables was defined in an Oracle Database. A Python script using the oracledb library was developed to connect to the database and insert the combined, analyzed data. This ensures the data is permanently stored for future use or reporting.
+
+        KPIs Achieved: Successfully established a connection, created the schema, and populated the tables with over 2,800 entries.
+
+    Task 4: Interactive Dashboard & Final Presentation (In Progress)
+
+        Objective: Visualize key insights and present actionable recommendations via an interactive dashboard.
+
+        Methodology: An interactive dashboard is being built using Streamlit and Plotly. The dashboard will display key metrics and visualizations, including overall sentiment distribution, sentiment by bank, and top themes in negative reviews.
+
+        Output: A live, interactive web application (app.py) that presents project findings in a clear and compelling format.
+
+Key Insights & Recommendations (Summary)
+
+    Overall Sentiment: The analysis provides a clear overview of customer sentiment, allowing banks to be benchmarked against each other.
+
+    Common Pain Points: App stability (crashes), transaction performance (slow transfers), and customer support responsiveness are recurring themes.
+
+    Key Drivers: User-friendly interfaces, efficient core banking functionalities, and comprehensive digital experiences are strong drivers of satisfaction.
+
+Setup and Usage
+
+To set up and run this project, follow these steps:
+
+    Clone the Repository:
+    Bash
+
+git clone [https://github.com/tigrem/Bank-reviews-analysis.git]
+cd Bank-reviews-analysis
+
+Create a Virtual Environment (Recommended):
+Bash
+
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+
+Install Dependencies:
+Bash
+
+pip install pandas google-play-scraper spacy scikit-learn vaderSentiment tqdm oracledb streamlit plotly
+
+Oracle Database Setup:
+
+    Ensure an Oracle Database instance is running and accessible.
+
+    Create a .env file in the root directory with your database credentials:
+    Ini, TOML
+
+    ORACLE_DB_USER=your_username
+    ORACLE_DB_PASSWORD=your_password
+    ORACLE_DB_DSN=your_dsn_string
+
+Run the Data Pipeline:
+
+    Open the main Jupyter notebook and run all the cells to scrape, clean, analyze, and save the data to a CSV and your database.
+
+Run the Interactive Dashboard:
+
+    From your terminal, in the project's root directory, run:
+
+Bash
+
+streamlit run app.py
