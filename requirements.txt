@@ -3,3 +3,10 @@ pandas
 numpy
 matplotlib
 seaborn
+tqdm
+spacy
+scikit-learn
+vaderSentiment
+oracledb
+streamlit
+plotly
